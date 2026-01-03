@@ -5,9 +5,6 @@
 name: Build and deploy Python project to Azure Function App - eduardoteste
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 env:
@@ -17,6 +14,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: read #This is required for actions/checkout
     # permissions:
