@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.get("/return_http")
 def return_http():
-    return Response("<h1>Hello World™</h1>", mimetype="text/html")
+    return Response("<h1>Hello World™ 2</h1>", mimetype="text/html")
 
 
 # app = func.WsgiFunctionApp(
