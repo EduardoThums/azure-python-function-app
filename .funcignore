@@ -1,0 +1,9 @@
+deploy.sh
+pyproject.toml
+.python-version
+README.md
+requirements.txt
+uv.lock
+.venv
+.git*
+.vscode
