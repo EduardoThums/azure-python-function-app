@@ -1,36 +1,37 @@
 name: Build and deploy Python project to Azure Function App
 
 on:
-  push:
-    branches:
-      - main
-      - stage
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+        - stage
+        - production
 
 jobs:
-  deploy-stage:
-    if: github.ref == 'refs/heads/stage'
-    uses: ./.github/workflows/deploy_environment.yml
-    permissions:
-      contents: read
-      id-token: write
-    with:
-      app_name: testeeduardo
-      environment: stage
-    secrets:
-      azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
-      azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-      azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  validate-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ] && [ "$GITHUB_REF" != "refs/heads/stage" ]; then
+            echo "Error: This workflow can only be dispatched from main or stage branches"
+            exit 1
+          fi
 
-  deploy-production:
-    if: github.ref == 'refs/heads/main'
+  deploy:
+    needs: validate-branch
     uses: ./.github/workflows/deploy_environment.yml
     permissions:
       contents: read
       id-token: write
     with:
-      app_name: testeeduardo
-      environment: production
+      app_name: ${{ vars.APPLICATION_NAME }}
+      environment: ${{ inputs.environment }}
     secrets:
       azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
       azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
