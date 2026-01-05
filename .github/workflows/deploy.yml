@@ -24,8 +24,12 @@ jobs:
           fi
 
   deploy:
+    needs: validate-branch
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -65,3 +69,4 @@ jobs:
           app-name: ${{ inputs.app_name }}
           slot-name: ${{ inputs.environment }}
           package: .
+  
