@@ -25,14 +25,47 @@ jobs:
 
   deploy:
     needs: validate-branch
-    uses: ./.github/workflows/deploy_environment.yml
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     permissions:
       contents: read
       id-token: write
-    with:
-      app_name: ${{ vars.APPLICATION_NAME }}
-      environment: ${{ inputs.environment }}
-    secrets:
-      azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
-      azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-      azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v6
+        with:
+          python-version-file: ".python-version"
+
+      - name: Create .python_packages folder
+        run: mkdir -p .python_packages/lib
+
+      - name: Install the project dependencies
+        run: uv sync --locked --all-extras --dev
+
+      - name: Copy the project dependencies to the .python_packages folder
+        run: cp -r .venv/lib/python3.13/site-packages .python_packages/lib/
+
+      - name: Remove uv auto-generated files
+        run: rm .python_packages/lib/site-packages/_virtualenv.*
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.azure_client_id }}
+          tenant-id: ${{ secrets.azure_tenant_id }}
+          subscription-id: ${{ secrets.azure_subscription_id }}
+
+      - name: 'Deploy to Azure Functions'
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.APPLICATION_NAME }}
+          slot-name: ${{ inputs.environment }}
+          package: .
+  
