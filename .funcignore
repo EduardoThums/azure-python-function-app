@@ -1,9 +1,11 @@
-deploy.sh
+AGENTS.md
+.git
+.github
+.gitignore
 pyproject.toml
 .python-version
 README.md
-requirements.txt
+trigger_github_workflow.sh
 uv.lock
 .venv
-.git*
 .vscode
