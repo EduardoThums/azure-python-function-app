@@ -67,4 +67,5 @@ jobs:
           app-name: ${{ vars.APPLICATION_NAME }}
           slot-name: ${{ needs.determine-environment.outputs.environment }}
           package: .
+          build-remote: true
   
