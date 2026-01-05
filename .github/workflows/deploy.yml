@@ -2,31 +2,30 @@ name: Build and deploy Python project to Azure Function App
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'stage'
-        type: choice
-        options:
-        - stage
-        - production
 
 jobs:
-  validate-branch:
+  determine-environment:
     runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
     steps:
-      - name: Check branch
+      - name: Set environment
+        id: set-env
         run: |
-          if [ "$GITHUB_REF" != "refs/heads/main" ] && [ "$GITHUB_REF" != "refs/heads/stage" ]; then
-            echo "Error: This workflow can only be dispatched from main or stage branches"
+          if [ "$GITHUB_REF" == "refs/heads/main" ]; then
+            ENVIRONMENT=production
+          elif [ "$GITHUB_REF" == "refs/heads/stage" ]; then
+            ENVIRONMENT=stage
+          else
+            echo "Error: This workflow can only be run from main or stage branches"
             exit 1
           fi
+          echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
 
   deploy:
-    needs: validate-branch
+    needs: determine-environment
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ needs.determine-environment.outputs.environment }}
     permissions:
       contents: read
       id-token: write
@@ -66,6 +65,6 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: ${{ vars.APPLICATION_NAME }}
-          slot-name: ${{ inputs.environment }}
+          slot-name: ${{ needs.determine-environment.outputs.environment }}
           package: .
   
