@@ -15,7 +15,7 @@ jobs:
       contents: read
       id-token: write
     with:
-      app_name: ${{ vars.APPLICATION_NAME }}
+      app_name: testeeduardo
       environment: stage
     secrets:
       azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -29,7 +29,7 @@ jobs:
       contents: read
       id-token: write
     with:
-      app_name: ${{ vars.APPLICATION_NAME }}
+      app_name: testeeduardo
       environment: production
     secrets:
       azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
