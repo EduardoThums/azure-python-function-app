@@ -1,25 +1,29 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure Functions: https://aka.ms/python-webapps-actions
-
-name: Build and deploy Python project to Azure Function App - eduardoteste
++name: Deploy to Azure Functions
 
 on:
-  push:
-    branches:
-      - main
-      - stage
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      app_name:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+    secrets:
+      azure_client_id:
+        required: true
+      azure_tenant_id:
+        required: true
+      azure_subscription_id:
+        required: true
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
-  ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'production' || 'stage' }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stage'
-    environment: ${{ env.ENVIRONMENT }}
+    environment: ${{ inputs.environment }}
     permissions:
       contents: read #This is required for actions/checkout
       id-token: write #This is required for requesting the JWT
@@ -51,14 +55,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.azure_client_id }}
+          tenant-id: ${{ secrets.azure_tenant_id }}
+          subscription-id: ${{ secrets.azure_subscription_id }}
 
       - name: 'Deploy to Azure Functions'
         uses: Azure/functions-action@v1
         id: deploy-to-function
         with:
-          app-name: ${{ vars.APPLICATION_NAME }}
-          slot-name: ${{ env.ENVIRONMENT }}
+          app-name: ${{ inputs.app_name }}
+          slot-name: ${{ inputs.environment }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
