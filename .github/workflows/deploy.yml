@@ -62,10 +62,10 @@ jobs:
           subscription-id: ${{ secrets.azure_subscription_id }}
 
       - name: 'Deploy to Azure Functions'
-        uses: Azure/functions-action@v1
+        uses: Azure/functions-action@v1.5.3
         with:
           app-name: ${{ vars.APPLICATION_NAME }}
-          slot-name: ${{ needs.determine-environment.outputs.environment }}
           package: .
-          build-remote: true
+          remote-build: true
+          respect-funcignore: true
   
