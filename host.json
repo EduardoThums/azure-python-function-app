@@ -10,6 +10,13 @@
                 "isEnabled": true,
                 "excludedTypes": "Request"
             }
+        },
+        "fileLoggingMode": "debugOnly",
+        "logLevel": {
+            "default": "Warning",
+            "Host.Aggregator": "Trace",
+            "Host.Results": "Information",
+            "Function": "Information"
         }
     },
     "extensions": {
