@@ -9,3 +9,4 @@ trigger_github_workflow.sh
 uv.lock
 .venv
 .vscode
+run.py

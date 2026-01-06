@@ -2,7 +2,7 @@
 
 # import azure.functions as func
 from flask import Flask, Response, current_app
-from secrets_plugin import init_secret_manager
+from website.secrets_plugin import init_secret_manager
 
 app = Flask(__name__)
 
