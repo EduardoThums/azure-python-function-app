@@ -49,13 +49,31 @@ jobs:
         run: mkdir -p .python_packages/lib
 
       - name: Install the project dependencies
-        run: uv sync --locked --all-extras --dev
+        run: uv sync --locked --no-dev
 
       - name: Copy the project dependencies to the .python_packages folder
         run: cp -r .venv/lib/python3.13/site-packages .python_packages/lib/
 
       - name: Remove uv auto-generated files
         run: rm .python_packages/lib/site-packages/_virtualenv.*
+
+      - name: create zip package
+        run: |
+          zip --quiet -r "package.zip" . \
+            -x ".venv/*" \
+            -x ".vscode/*" \
+            -x "tests/*" \
+            -x "packages/*" \
+            -x uv.lock \
+            -x run.py \
+            -x README.md \
+            -x .coveragerc \
+            -x .gitignore \
+            -x .osv-scanner.toml \
+            -x pyproject.toml \
+            -x build.sh \
+            -x Dockerfile \
+            -x .python-version
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -68,7 +86,8 @@ jobs:
         uses: Azure/functions-action@v1.5.3
         with:
           app-name: ${{ vars.APPLICATION_NAME }}
-          package: .
-          remote-build: true
-          respect-funcignore: true
-  
+          # package: .
+          # remote-build: true
+          # respect-funcignore: true
+          package: ./package.zip
+          remote-build: false
