@@ -34,25 +34,25 @@ def admin_function(req: func.HttpRequest, context: func.Context) -> func.HttpRes
     return func.WsgiMiddleware(spoof_path_middleware).handle(req, context)
 
 
-@func_app.function_name(name="TimerJob5Min")
-@func_app.timer_trigger(
-    schedule="0 */5 * * * *",
-    arg_name="timer5min",
-    run_on_startup=False,
-    use_monitor=True,
-)
-def timer_job_5min(timer5min: func.TimerRequest) -> None:
-    logging.info("Timer job (5 min) triggered")
+# @func_app.function_name(name="TimerJob5Min")
+# @func_app.timer_trigger(
+#     schedule="0 */5 * * * *",
+#     arg_name="timer5min",
+#     run_on_startup=False,
+#     use_monitor=True,
+# )
+# def timer_job_5min(timer5min: func.TimerRequest) -> None:
+#     logging.info("Timer job (5 min) triggered")
 
-    try:
-        # job_run_async_reports()
-        logging.info("run")
+#     try:
+#         # job_run_async_reports()
+#         logging.info("run")
 
-    except Exception:
-        logging.exception("Error to send request on job")
+#     except Exception:
+#         logging.exception("Error to send request on job")
 
-    if timer5min.past_due:
-        logging.warning("Timer job (5 min) is past due!")
+#     if timer5min.past_due:
+#         logging.warning("Timer job (5 min) is past due!")
 
 
 # @func_app.function_name(name="TimerJob15Min")
