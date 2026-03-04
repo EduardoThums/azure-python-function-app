@@ -1,0 +1,1 @@
+GLOBAL_PREFIX_URL = "/adm"
